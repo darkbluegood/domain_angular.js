@@ -59,7 +59,7 @@
     </div>
 </div>
 <script type="text/javascript">
-
+//angular.element(document).(function(){
     var app = angular.module("app",[]);
 
     app.controller("domain",function($scope,$interval,$http){
@@ -78,7 +78,7 @@
         $scope.length = 5;
 
         $scope.pause = function(){
-            run.aa && clearInterval(run.aa);
+            run.aa && $interval.cancel(run.aa);
         }
         $scope.run = function(){
             run();
@@ -94,7 +94,7 @@
         var speed= 1000,_isbusy = true,startTime,lastTime;
 
         function run(){
-            arguments.callee.aa = setInterval(function(){
+            arguments.callee.aa = $interval(function(){
                 if(_isbusy){
                     _isbusy = false;
                     startTime = new Date().valueOf();
@@ -129,7 +129,7 @@
         }
         run()
     });
-
+//});
 </script>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
