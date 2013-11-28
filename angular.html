@@ -5,24 +5,27 @@
 
     <title>angular试验-域名注册查看</title>
 
+    <link rel="stylesheet" href="http://cdn.bootcss.com/twitter-bootstrap/3.0.2/css/bootstrap.min.css">
+
+    <link rel="stylesheet" type="text/css" href="http://v3.bootcss.com/dist/css/bootstrap-theme.min.css">
     <script type="text/javascript" src="angular.js"></script>
 
 <style>
     *{ margin:0;padding: 0; }
-
-    .box{ width: 400px;height: 100px;background: #aaa;border:2px dotted red;position: fixed;bottom: 0;right: 5px;font-size: 14px }
-    .textbox{ width: 400px;height: 120px;resize:none; }
+    .box{ padding:15px;height: 100px;background: #aaa;border:2px dotted red;position: fixed;bottom: 0;right: 5px;font-size: 14px }
+    .textbox{ resize:none; }
     .box1{ position: fixed;bottom: 120px;right: 5px;font-size: 14px }
-    .box button{ padding:3px; }
+    .box button{ font-size: 14px }
     .p1{ line-height: 20px }
+    th,td{ padding-left: 15px }
 </style>
 </head>
 <body ng-app="app" ng-controller="domain">
-
-    <table cellspadding="0" cellspacing="0" border="1" width="700" align="center">
+<div class="container">
+    <table cellspadding="0" cellspacing="0" border="1" width="100%" align="center">
         <thead>
             <tr>
-                <th>编号</th><th>类型</th> <th>域名</th> <th>状态</th> <th>链接</th> <th>时间</th> <th>&nbsp;</th>
+                <th>编号</th><th>类型</th> <th>域名</th> <th>状态</th> <th>链接</th> <th>时间</th> <th>耗时</th> <th>操作</th> 
             </tr>
         </thead>
         <tbody>
@@ -33,6 +36,7 @@
                 <td ng-style="{'color':keys.color}">{{keys.status}}</td>
                 <td><a ng-href="http://{{keys.link}}" target="_blank">点击访问</a></td>
                 <td>{{keys.date}}</td>
+                <td>{{keys.time}}ms</td>
                 <td align="center"><a ng-click="array.splice($index,1)" href="javascript:void(0)">移除</a></td>
             </tr>
         </tbody>
@@ -40,19 +44,20 @@
 
     <div class="box1">
         <p class="p1">请输入关键字:<br />例如:wo,ai,ni或者1,2,3,4,5,6 <br />注意:每个关键字要逗号分开!</p>
-        <textarea name="" class="textbox" ng-model="keyword"></textarea><br />
-        域名位数:<input type="text" size="4" ng-model="length"><br />
+        <textarea name="" class="textbox form-control" ng-model="keyword"></textarea><br />
+        域名位数:<input type="text" size="4" ng-model="length" class="form-control"><br />
     </div>
 
     <div class="box">
-        <button ng-click="pause()">暂停</button>
-        <button ng-click="run()">开始</button>
-        <button ng-click="clear()">清除</button>
+        <button ng-click="pause()" class="btn btn-danger">暂停</button>
+        <button ng-click="run()" class="btn btn-primary">开始</button>
+        <button ng-click="clear()" class="btn btn-warning">清除</button>
+        <br />
         <br />
         选择域名类型:
         <select ng-model="selected" ng-change="domainType()" ng-options="keys for keys in domainArray"></select>
     </div>
-
+</div>
 <script type="text/javascript">
 
     var app = angular.module("app",[]);
@@ -70,7 +75,7 @@
         $scope.domainArray = ["com","cn","net","org","com.cn","name","cc","co","gov.cn","info","mobi","so"];
         $scope.selected = $scope.domainArray[0];
         $scope.keyword = "1,2,3,4";
-        $scope.length = 6;
+        $scope.length = 5;
 
         $scope.pause = function(){
             run.aa && clearInterval(run.aa);
@@ -86,12 +91,13 @@
             $scope.array = [];
         }
 
-        var speed= 1000,_isbusy = true;
+        var speed= 1000,_isbusy = true,startTime,lastTime;
 
         function run(){
             arguments.callee.aa = setInterval(function(){
                 if(_isbusy){
                     _isbusy = false;
+                    startTime = new Date().valueOf();
                     var keyword = $scope.keyword.split(",");
                     var val = "";
                     for(var i=0; i<$scope.length; i++){
@@ -102,13 +108,15 @@
                         method : "JSON",
                         url : "domain.php?domain="+val+"&type="+$scope.lastName
                     }).success(function(data,status){
+                        lastTime = new Date().valueOf() - startTime;
                         $scope.array.push({
                             type : $scope.type = data[0],
                             domain : $scope.domain = data[1],
                             status : $scope.status = data[3],
                             link : $scope.link = data[1],
                             color : $scope.color = data[4],
-                            date : new Date().getFullYear()+"-"+new Date().getMonth()+"-"+new Date().getDate()
+                            date : new Date().getFullYear()+"-"+new Date().getMonth()+"-"+new Date().getDate(),
+                            time : lastTime
                         });
                         _isbusy = true;
                     }).error(function(data,status){
@@ -124,5 +132,9 @@
 
 </script>
 
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="http://cdn.bootcss.com/twitter-bootstrap/3.0.2/js/bootstrap.min.js"></script>
 </body>
 </html>
