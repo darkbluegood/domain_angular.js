@@ -17,12 +17,12 @@
     .box1{ position: fixed;bottom: 120px;right: 5px;font-size: 14px }
     .box button{ font-size: 14px }
     .p1{ line-height: 20px }
-    th,td{ padding-left: 15px }
+    th,td{ /*padding-left: 15px*/ }
 </style>
 </head>
 <body ng-app="app" ng-controller="domain">
 <div class="container">
-    <table cellspadding="0" cellspacing="0" border="1" width="100%" align="center">
+    <table cellspadding="0" cellspacing="0" border="1" width="100%" align="center" class="table table-hover table-bordered">
         <thead>
             <tr>
                 <th>编号</th><th>类型</th> <th>域名</th> <th>状态</th> <th>链接</th> <th>时间</th> <th>耗时</th> <th>操作</th> 
@@ -50,7 +50,7 @@
 
     <div class="box">
         <button ng-click="pause()" class="btn btn-danger">暂停</button>
-        <button ng-click="run()" class="btn btn-primary">开始</button>
+        <button ng-click="play()" class="btn btn-primary">开始</button>
         <button ng-click="clear()" class="btn btn-warning">清除</button>
         <br />
         <br />
@@ -59,8 +59,7 @@
     </div>
 </div>
 <script type="text/javascript">
-//angular.element(document).(function(){
-    var app = angular.module("app",[]);
+var app = angular.module("app",[]);
 
     app.controller("domain",function($scope,$interval,$http){
         $scope.type = "";
@@ -80,11 +79,11 @@
         $scope.pause = function(){
             run.aa && $interval.cancel(run.aa);
         }
-        $scope.run = function(){
+        $scope.play = function(){
+            run.aa && $interval.cancel(run.aa);
             run();
         }
         $scope.domainType = function(){
-            console.log(this.selected)
             $scope.lastName = this.selected;
         }
         $scope.clear = function(){
@@ -127,9 +126,12 @@
 
             },speed);
         }
-        run()
+        
+        angular.element(document).ready(function(){
+            run();
+        });
+        
     });
-//});
 </script>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
